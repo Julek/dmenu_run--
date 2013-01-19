@@ -16,9 +16,7 @@ main = do
      ex <- getExecs ls
      input@(~(tar:args)) <- fmap (splitOn " ") (runDmenu . map fst $ ex)
      let pathLookup = lookup tar ex
-         execPath = if isJust pathLookup
-                    then (fromJust pathLookup) ++ tar
-                    else []
+         execPath = fromMaybe [] $ pathLookup >>= return . (++tar)
      unless (null input || null execPath) (void $ forkOS (void $ rawSystem execPath args))
 
 runDmenu :: [String] -> IO String
